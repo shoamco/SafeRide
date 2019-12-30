@@ -19,7 +19,7 @@ int inpHeight = 416; // Height of network's input image
 vector<string> classes;
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
-void postprocess(Mat& frame, const vector<Mat>& out);
+void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection);
 
 // Draw the predicted bounding box
 void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
@@ -55,8 +55,8 @@ int helmetDetection(int argc, char** argv)
 
     // Open a video file or an image file or a camera stream.
     string str, outputFile, outputVideo;
-   /* VideoCapture cap;
-    VideoWriter video;*/
+    /* VideoCapture cap;
+     VideoWriter video;*/
     VideoCapture cap(0);
     int frame_width = cap.get(CAP_PROP_FRAME_WIDTH);
     int frame_height = cap.get(CAP_PROP_FRAME_HEIGHT);
@@ -67,7 +67,7 @@ int helmetDetection(int argc, char** argv)
     try {
 
         outputVideo = "./yolo_out_cpp.avi";
-        outputFile  = "./yolo_out_cpp.jpg";
+        outputFile = "./yolo_out_cpp.jpg";
 
         //outputFile = "yolo_out_cpp.mp4";
         //outputFile = "yolo_out_cpp.mp4";
@@ -141,19 +141,18 @@ int helmetDetection(int argc, char** argv)
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
-        cout << "in while\n";
-       
+      
+
         cap >> frame;
-     
-        cout << "in else framecounter " << framecounter - 1 << endl;
+
+      
         if (framecounter++ % 30 == 0) {
             // Stop the program if reached end of video
             //if (frame.empty()) {
             if (framecounter > 200) {
-                std::cout << "Helmet!!!\n";
+         
                 cout << "Done processing !!!" << endl;
-                cout << "Output file is stored as " << outputFile << endl;
-                cout << "Output video is stored as " << outputVideo << endl;
+          
                 flag = false;
                 //waitKey(3000);
                 break;
@@ -172,15 +171,17 @@ int helmetDetection(int argc, char** argv)
                 net.forward(outs, getOutputsNames(net));
 
                 // Remove the bounding boxes with low confidence
-                postprocess(frame, outs);
-                cout << "1111\n";
+                int num_detection = 0;
+              postprocess(frame, outs, num_detection);
+               cout << "num_detection " << num_detection << endl;
+              
                 // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
                 vector<double> layersTimes;
                 double freq = getTickFrequency() / 1000;
                 double t = net.getPerfProfile(layersTimes) / freq;
                 string label = format("Inference time for a frame : %.2f ms", t);
                 putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-                cout << "22222\n";
+            ;
                 // Write the frame with the detection boxes
                 Mat detectedFrame;
                 frame.convertTo(detectedFrame, CV_8U);
@@ -194,7 +195,7 @@ int helmetDetection(int argc, char** argv)
         //video.write(frame);
         //string save_image= "./yolo_out_cpp.jpg";
 
-       
+
     }
     cout << "after while\n";
     cap.release();
@@ -203,7 +204,7 @@ int helmetDetection(int argc, char** argv)
 
     return 0;
 }
-void save_frame_in_image(Mat& frame,size_t framecounter) {
+void save_frame_in_image(Mat& frame, size_t framecounter) {
     cout << "save_frame_in_image\n";
     std::stringstream ss;
     ss << "frame" << framecounter << ".jpg";;
@@ -216,12 +217,12 @@ void save_frame_in_image(Mat& frame,size_t framecounter) {
 }
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
-void postprocess(Mat& frame, const vector<Mat>& outs)
+void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
 {
     vector<int> classIds;
     vector<float> confidences;
     vector<Rect> boxes;
-
+     num_detection = 0;
     for (size_t i = 0; i < outs.size(); ++i)
     {
         // Scan through all the bounding boxes output from the network and keep only the
@@ -249,12 +250,14 @@ void postprocess(Mat& frame, const vector<Mat>& outs)
                 classIds.push_back(classIdPoint.x);
                 confidences.push_back((float)confidence);
                 boxes.push_back(Rect(left, top, width, height));
+                ++num_detection;
             }
             else
             {
                 std::cout << "no Helmet\n";
             }
         }
+  
     }
 
     // Perform non maximum suppression to eliminate redundant overlapping boxes with
