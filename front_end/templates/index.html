@@ -5,23 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
-    <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
-    <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='util.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <!--===============================================================================================-->
 </head>
 <body>
+
+
 
 <div class="limiter">
     <div class="container-table100">
@@ -32,16 +22,24 @@
                     <tr class="table100-head">
 						<th class="column1">User ID</th>
                         <th class="column2">Name</th>
-                        <th class="column3">Positive Points</th>
-						<th class="column4">Negative Points</th>
+                        <th class="column3">Email</th>
+                        <th class="column4">Password</th>
+                        <th class="column5">Phone</th>
+                         <th class="column6">Num Trips</th>
+                        <th class="column7">Positive Points</th>
+						<th class="column8">Negative Points</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for user in users %}
-					      <td class="column1">{{ user.user_id }}</td>
+                        <td class="column1">{{ user.user_id }}</td>
                         <td class="column2">{{ user.name }}</td>
-                        <td class="column3">{{ user.positive_points }}</td>
-                        <td class="column4">{{ user.negative_points }}</td>
+                        <td class="column3">{{ user.email }}</td>
+                        <td class="column4">{{ user.password }}</td>
+                        <td class="column5">{{ user.phone }}</td>
+                        <td class="column6">{{ user.num_trips }}</td>
+                        <td class="column7">{{ user.positive_points }}</td>
+                        <td class="column8">{{ user.negative_points }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -50,17 +48,6 @@
         </div>
     </div>
 </div>
-
-
-<!--===============================================================================================-->
-<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-<script src="vendor/bootstrap/js/popper.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-<script src="vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-<script src="js/main.js"></script>
 
 </body>
 </html>
