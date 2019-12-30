@@ -105,11 +105,7 @@ iframe {
 .container-table100 {
   width: 100%;
   min-height: 100vh;
-  background: #c850c0;
-  background: -webkit-linear-gradient(45deg, #4158d0, #c850c0);
-  background: -o-linear-gradient(45deg, #4158d0, #c850c0);
-  background: -moz-linear-gradient(45deg, #4158d0, #c850c0);
-  background: linear-gradient(45deg, #4158d0, #c850c0);
+  background: ##fafafa;
 
   display: -webkit-box;
   display: -webkit-flex;
@@ -193,31 +189,46 @@ tbody tr:hover {
 }
 
 .column1 {
-  width: 260px;
+  width: 7px;
+  text-align: center;
   padding-left: 40px;
 }
 
 .column2 {
-  width: 160px;
+  width: 7px;
+  text-align: center;
 }
 
 .column3 {
-  width: 245px;
+  width: 7px;
+  text-align: center;
 }
 
 .column4 {
-  width: 110px;
-  text-align: right;
+  width: 7px;
+  text-align: center;
 }
 
 .column5 {
-  width: 170px;
-  text-align: right;
+  width: 7px;
+  text-align: center;
 }
 
 .column6 {
-  width: 222px;
-  text-align: right;
+  width: 7px;
+  text-align: center;
+  padding-right: 62px;
+}
+
+.column7 {
+  width: 7px;
+  text-align: center;
+  padding-right: 62px;
+}
+
+.column8 {
+  width: 7px;
+  text-align: center;
   padding-right: 62px;
 }
 
