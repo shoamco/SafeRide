@@ -142,7 +142,7 @@ int helmetDetection(int argc, char** argv)
             }
             else {
                 cout << "in else framecounter!!!!! " << framecounter - 1 << endl;
-                cout << "1111\n";
+               
                 // Create a 4D blob from a frame.
                 blobFromImage(frame, blob, 1 / 255.0, Size(inpWidth, inpHeight), Scalar(0, 0, 0), true, false);
 
@@ -163,6 +163,9 @@ int helmetDetection(int argc, char** argv)
                     if (num_frame_without_helmet > 2) {
                         No_Helmet = true; 
                         alarm_on = true;
+                   
+                            system("omxplayer -o both alarm_cut.mp3");
+                       
                      
                     }
                 }
