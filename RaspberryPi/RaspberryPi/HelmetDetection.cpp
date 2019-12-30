@@ -73,31 +73,7 @@ int helmetDetection(int argc, char** argv)
         //outputFile = "yolo_out_cpp.mp4";
         std::cout << "outputFile " << outputFile << std::endl;
         std::cout << "outputVideo " << outputVideo << std::endl;
-        //if (parser.has("image"))
-        //{
-        //    // Open the image file
-        //    str = parser.get<String>("image");
-
-        //    ifstream ifile(str);
-        //    if (!ifile) throw("error");
-        //    cap.open(str);
-        //    str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.jpg");
-        //    outputFile = str;
-        //}
-        //else if (parser.has("video"))
-        //{
-            // Open the video file
-            //str = parser.get<String>("video");
-        //str = "input1.mp4";
-        //ifstream ifile(str);
-        //if (!ifile) throw("error");
-        //cap.open(str);
-        ////str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.avi");
-        //str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.jpg");
-        //outputFile = str;
-        //}
-        // Open the webcaom
-        //else cap.open(parser.get<int>("device"));
+        
 
     }
     catch (...) {
@@ -113,14 +89,7 @@ int helmetDetection(int argc, char** argv)
 
     // Create a window
     static const string kWinName = "Deep learning object detection in OpenCV";
-    //namedWindow(kWinName, WINDOW_NORMAL);
-    //cap = VideoCapture(0);
-    //framerate = cap.get(5);
-    // Process frames.
-    //int camera_device = 0;
-    //VideoCapture capture;
-    ////-- 2. Read the video stream
-    //capture.open(camera_device);
+   
     if (!cap.isOpened())
     {
         cout << "--(!)Error opening video capture\n";
@@ -138,6 +107,9 @@ int helmetDetection(int argc, char** argv)
         return -1;
     }
     //while (flag)
+    bool No_Helmet = false;
+    int num_frame_without_helmet=0;
+
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
@@ -152,6 +124,7 @@ int helmetDetection(int argc, char** argv)
             if (framecounter > 200) {
          
                 cout << "Done processing !!!" << endl;
+                cout << "  No_Helmet !!!" << No_Helmet<< endl;
           
                 flag = false;
                 //waitKey(3000);
@@ -174,6 +147,16 @@ int helmetDetection(int argc, char** argv)
                 int num_detection = 0;
               postprocess(frame, outs, num_detection);
                cout << "num_detection " << num_detection << endl;
+               if (num_detection==0) {
+                  
+                   num_frame_without_helmet++;
+                   if (num_frame_without_helmet>2) {
+                       No_Helmet = true;
+                   }
+               }
+               else {
+                   num_frame_without_helmet = 0;
+               }
               
                 // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
                 vector<double> layersTimes;
@@ -185,7 +168,7 @@ int helmetDetection(int argc, char** argv)
                 // Write the frame with the detection boxes
                 Mat detectedFrame;
                 frame.convertTo(detectedFrame, CV_8U);
-                cout << "3333\n";
+               
                 //video.write(detectedFrame);
                 //imwrite(outputFile, detectedFrame);
                 save_frame_in_image(frame, framecounter);
@@ -236,10 +219,10 @@ void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
             double confidence;
             // Get the value and location of the maximum score
             minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-            cout << "confidence " << confidence << endl;
+            //cout << "confidence " << confidence << endl;
             if (confidence > confThreshold)
             {
-                std::cout << "Helmet!!!\n";
+               
                 int centerX = (int)(data[0] * frame.cols);
                 int centerY = (int)(data[1] * frame.rows);
                 int width = (int)(data[2] * frame.cols);
@@ -252,10 +235,10 @@ void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
                 boxes.push_back(Rect(left, top, width, height));
                 ++num_detection;
             }
-            else
+         /*   else
             {
-                std::cout << "no Helmet\n";
-            }
+              
+            }*/
         }
   
     }
