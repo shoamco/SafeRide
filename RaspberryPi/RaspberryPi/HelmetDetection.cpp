@@ -115,8 +115,13 @@ int helmetDetection(int argc, char** argv)
     clock_t begin = clock();
 
     clock_t end;
-
+    clock_t begin_detection;
+    clock_t end_detection;
+    clock_t begin_save_frame;
+    clock_t end_save_frame;
     double time_frame;
+    double time_detection;
+    double time_save_frame;
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
@@ -125,7 +130,7 @@ int helmetDetection(int argc, char** argv)
         end = clock();
         time_frame = (double(end - begin) / CLOCKS_PER_SEC)*100;
         //std::cout << "time  " << time_frame << endl;
-        if (int(time_frame) % 5 == 0) {
+        if (int(time_frame) % 4 == 0) {
             cap >> frame;
             framecounter++;
 
@@ -144,7 +149,7 @@ int helmetDetection(int argc, char** argv)
             }
             else {
                 std::cout << "in else framecounter!!!!! " << framecounter - 1 << endl;
-               
+                 begin_detection = clock();
                 // Create a 4D blob from a frame.
                 blobFromImage(frame, blob, 1 / 255.0, Size(inpWidth, inpHeight), Scalar(0, 0, 0), true, false);
 
@@ -158,14 +163,21 @@ int helmetDetection(int argc, char** argv)
                 // Remove the bounding boxes with low confidence
                 int num_detection = 0;
                 postprocess(frame, outs, num_detection);
+                
                 std::cout << "num_detection " << num_detection << endl;
-                if (num_detection == 0) {
+                end_detection = clock();
+                 time_detection = (double(end_detection - begin_detection) / CLOCKS_PER_SEC) / 10;
+                cout << "time_detection " << time_detection << endl;
+                if (num_detection == 0) {//no helmet
 
                     num_frame_without_helmet++;
-                    if (num_frame_without_helmet > 2) {
+                    system("omxplayer -o both alarm_cut.mp3");
+                    cout << "num_frame_without_helmet " << num_frame_without_helmet << endl;
+                    //if (num_frame_without_helmet >=1) {
                         No_Helmet = true; 
                         alarm_on = true;
-                        voiceOn();
+                       
+                        //voiceOn();
                       /*  pthread_t thread_alart;
                         thread_alart_vector.push_back(thread_alart);
 
@@ -173,7 +185,7 @@ int helmetDetection(int argc, char** argv)
                         if (p) {
                             cout << "unable to create sound thread\n";
                         }*/
-                    }
+                    //}
                             //system("omxplayer -o both alarm_cut.mp3");
                        
                      
@@ -187,7 +199,7 @@ int helmetDetection(int argc, char** argv)
                     }*/
 
                 }
-
+                begin_save_frame = clock();
                 // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
                 vector<double> layersTimes;
                 double freq = getTickFrequency() / 1000;
@@ -202,13 +214,18 @@ int helmetDetection(int argc, char** argv)
                 //video.write(detectedFrame);
                 //imwrite(outputFile, detectedFrame);
                 save_frame_in_image(frame, framecounter);
+
+                end_save_frame = clock();
+                time_save_frame = (double(end_save_frame - begin_save_frame) / CLOCKS_PER_SEC) / 10;
+                cout << "time save fame " << time_save_frame << endl;
                 //imshow(kWinName, frame);
             }
           
         }
-       /* if (alarm_on) {
-            voiceOn();
-        }*/
+        if (alarm_on) {
+            //voiceOn();
+            system("omxplayer -o both alarm_cut.mp3");
+        }
     }
         //}
         //video.write(frame);
@@ -225,11 +242,11 @@ int helmetDetection(int argc, char** argv)
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout << "time elapsed_secs " << elapsed_secs << endl;
     if (No_Helmet) {
-        system("python3 postRest.py 16454 0");
+        system("python3 postRest.py 121212 0");
 
     }
     else {//all drive with helmet
-        system("python3 postRest.py 16454 1");
+        system("python3 postRest.py 121212 1");
     }
     cap.release();
     //if (!parser.has("image")) video.release();
@@ -295,7 +312,9 @@ void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
         }
   
     }
-
+  /*  clock_t begin_save_frame;
+    clock_t end_save_frame;
+    double time_frame;*/
     // Perform non maximum suppression to eliminate redundant overlapping boxes with
     // lower confidences
     vector<int> indices;
