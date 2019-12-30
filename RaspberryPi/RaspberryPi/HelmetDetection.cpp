@@ -108,24 +108,34 @@ int helmetDetection(int argc, char** argv)
     }
     //while (flag)
     bool No_Helmet = false;
+    bool alarm_on = false;
     int num_frame_without_helmet=0;
+    clock_t begin = clock();
 
+    clock_t end;
+
+    double time_frame;
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
-      
 
-        cap >> frame;
+        //sleep(5);
+        end = clock();
+        time_frame = (double(end - begin) / CLOCKS_PER_SEC)*100;
+        //std::cout << "time  " << time_frame << endl;
+        if (int(time_frame) % 5 == 0) {
+            cap >> frame;
+            framecounter++;
 
-      
-        if (framecounter++ % 30 == 0) {
-            // Stop the program if reached end of video
-            //if (frame.empty()) {
-            if (framecounter > 200) {
-         
+            //if (framecounter++ % 30 == 0) {
+                // Stop the program if reached end of video
+                //if (frame.empty()) {
+                //if (framecounter > 200) {
+            if (framecounter > 10) {
+
                 cout << "Done processing !!!" << endl;
-                cout << "  No_Helmet !!!" << No_Helmet<< endl;
-          
+              
+
                 flag = false;
                 //waitKey(3000);
                 break;
@@ -145,42 +155,63 @@ int helmetDetection(int argc, char** argv)
 
                 // Remove the bounding boxes with low confidence
                 int num_detection = 0;
-              postprocess(frame, outs, num_detection);
-               cout << "num_detection " << num_detection << endl;
-               if (num_detection==0) {
-                  
-                   num_frame_without_helmet++;
-                   if (num_frame_without_helmet>2) {
-                       No_Helmet = true;
-                   }
-               }
-               else {
-                   num_frame_without_helmet = 0;
-               }
-              
+                postprocess(frame, outs, num_detection);
+                cout << "num_detection " << num_detection << endl;
+                if (num_detection == 0) {
+
+                    num_frame_without_helmet++;
+                    if (num_frame_without_helmet > 2) {
+                        No_Helmet = true; 
+                        alarm_on = true;
+                     
+                    }
+                }
+                else {
+                    num_frame_without_helmet = 0;
+                    alarm_on = false;
+                }
+
                 // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
                 vector<double> layersTimes;
                 double freq = getTickFrequency() / 1000;
                 double t = net.getPerfProfile(layersTimes) / freq;
                 string label = format("Inference time for a frame : %.2f ms", t);
                 putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-            ;
+                ;
                 // Write the frame with the detection boxes
                 Mat detectedFrame;
                 frame.convertTo(detectedFrame, CV_8U);
-               
+
                 //video.write(detectedFrame);
                 //imwrite(outputFile, detectedFrame);
                 save_frame_in_image(frame, framecounter);
                 //imshow(kWinName, frame);
             }
+          
         }
+        if (alarm_on) {
+            system("omxplayer -o both alarm_cut.mp3");
+        }
+    }
+        //}
         //video.write(frame);
         //string save_image= "./yolo_out_cpp.jpg";
 
 
-    }
+    //}
+   
     cout << "after while\n";
+    cout << "  No_Helmet in drive!!!" << No_Helmet << endl;
+     end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    cout << "time elapsed_secs " << elapsed_secs << endl;
+    if (No_Helmet) {
+        system("python3 postRest.py 16454 0");
+
+    }
+    else {//all drive with helmet
+        system("python3 postRest.py 16454 1");
+    }
     cap.release();
     //if (!parser.has("image")) video.release();
     video.release();
