@@ -15,10 +15,10 @@ int inpHeight = 416; // Height of network's input image
 vector<string> classes;
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
-void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection);
+void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection, int frame_height, int frame_width);
 
 // Draw the predicted bounding box
-void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
+void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame, int frame_height, int frame_width);
 
 // Get the names of the output layers
 vector<String> getOutputsNames(const Net& net);
@@ -82,7 +82,7 @@ int helmetDetection(int argc, char** argv)
         std::cout << "Could not open the input image/video stream" << endl;
         return 0;
     }
-
+ 
     // Get the video writer initialized to save the output video
   /*  if (!parser.has("image")) {
         video.open(outputFile, VideoWriter::fourcc('M', 'J', 'P', 'G'), 28, Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT)));
@@ -122,6 +122,7 @@ int helmetDetection(int argc, char** argv)
     double time_frame;
     double time_detection;
     double time_save_frame;
+    int test_num_of_detection_helmet = 0;
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
@@ -138,7 +139,7 @@ int helmetDetection(int argc, char** argv)
                 // Stop the program if reached end of video
                 //if (frame.empty()) {
                 //if (framecounter > 200) {
-            if (framecounter > 20) {
+            if (framecounter > 10) {
 
                 std::cout << "Done processing !!!" << endl;
               
@@ -162,9 +163,9 @@ int helmetDetection(int argc, char** argv)
 
                 // Remove the bounding boxes with low confidence
                 int num_detection = 0;
-                postprocess(frame, outs, num_detection);
+                postprocess(frame, outs, num_detection,  frame_height,frame_width);
                 
-                std::cout << "num_detection " << num_detection << endl;
+                std::cout << "detection helmet(num_detection) " << num_detection << endl;
                 end_detection = clock();
                  time_detection = (double(end_detection - begin_detection) / CLOCKS_PER_SEC) / 10;
                 cout << "time_detection " << time_detection << endl;
@@ -192,6 +193,7 @@ int helmetDetection(int argc, char** argv)
                     }
                
                 else {
+                    test_num_of_detection_helmet++;
                     num_frame_without_helmet = 0;
                     alarm_on = false;
                  /*   for (int i = 0; i < thread_alart_vector.size(); i++) {
@@ -238,6 +240,7 @@ int helmetDetection(int argc, char** argv)
 
     std::cout << "after while\n";
     std::cout << "  No_Helmet in drive!!!" << No_Helmet << endl;
+    std::cout << " test_num_of_detection_helmet" << test_num_of_detection_helmet << endl;
      end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout << "time elapsed_secs " << elapsed_secs << endl;
@@ -270,11 +273,12 @@ void save_frame_in_image(Mat& frame, size_t framecounter) {
 }
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
-void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
+void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection, int frame_height,int frame_width)
 {
     vector<int> classIds;
     vector<float> confidences;
     vector<Rect> boxes;
+    //vector<Rect> boxes_down_helmet;
      num_detection = 0;
     for (size_t i = 0; i < outs.size(); ++i)
     {
@@ -299,11 +303,22 @@ void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
                 int height = (int)(data[3] * frame.rows);
                 int left = centerX - width / 2;
                 int top = centerY - height / 2;
-
                 classIds.push_back(classIdPoint.x);
                 confidences.push_back((float)confidence);
+                cout << "top :" << top << endl;
+                cout << "frame_height/2 :" << frame_height /2 << endl;
+                if (top < frame_height / 2)//if the helmet in top half of the frame-is detction
+                {
+                    cout << "In the top half of the image\n";
+                    ++num_detection;
+                }
+               
                 boxes.push_back(Rect(left, top, width, height));
-                ++num_detection;
+             
+            /*    }*/
+               /* else {
+                    boxes_down_helmet.push_back(Rect(left, top, width, height));;
+                }*/
             }
          /*   else
             {
@@ -324,15 +339,19 @@ void  postprocess(Mat& frame, const vector<Mat>& outs,int &num_detection)
         int idx = indices[i];
         Rect box = boxes[idx];
         drawPred(classIds[idx], confidences[idx], box.x, box.y,
-            box.x + box.width, box.y + box.height, frame);
+            box.x + box.width, box.y + box.height, frame, frame_width, frame_height);
     }
 }
 
 // Draw the predicted bounding box
-void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame)
+void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame,  int frame_height,int frame_width)
 {
+
     //Draw a rectangle displaying the bounding box
     rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
+
+    // line for x1, y1, x2, y2 
+    //line(0,  frame_height/2, frame_width, frame_height/2);
 
     //Get the label for the class name and its confidence
     string label = format("%.2f", conf);
