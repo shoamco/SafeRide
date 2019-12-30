@@ -6,11 +6,7 @@
 //                 ./object_detection_yolo.out --image=bird.jpg
 
 
-//const char* keys =
-//"{help h usage ? | | Usage examples: \n\t\t./object_detection_yolo.out --image=dog.jpg \n\t\t./object_detection_yolo.out --video=run_sm.mp4}"
-//"{image i        || input image   }"
-//"{video v       |input1.mp4| input video   }"
-//;
+
 using namespace cv;
 using namespace dnn;
 using namespace std;
@@ -31,9 +27,10 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 // Get the names of the output layers
 vector<String> getOutputsNames(const Net& net);
 void detectionInHelmtFrame(Mat& frame, Mat& blob, const Net& net, CommandLineParser& parser, VideoWriter& video, string& outputFile);
-
+void save_frame_in_image(Mat& frame, size_t framecounter);
 int helmetDetection(int argc, char** argv)
 {
+    cout << "in helmetDetection\n";
     //CommandLineParser parser(argc, argv, keys);
     //parser.about("Use this script to run object detection using YOLO3 in OpenCV.");
     //if (parser.has("help"))
@@ -57,18 +54,25 @@ int helmetDetection(int argc, char** argv)
     net.setPreferableTarget(DNN_TARGET_CPU);
 
     // Open a video file or an image file or a camera stream.
-    string str, outputFile;
-    VideoCapture cap;
-    VideoWriter video;
+    string str, outputFile, outputVideo;
+   /* VideoCapture cap;
+    VideoWriter video;*/
+    VideoCapture cap(0);
+    int frame_width = cap.get(CAP_PROP_FRAME_WIDTH);
+    int frame_height = cap.get(CAP_PROP_FRAME_HEIGHT);
+    //VideoWriter video=// Define the codec and create VideoWriter object.The output is stored in 'outcpp.avi' file. 
+    VideoWriter video("outcpp.avi", VideoWriter::fourcc('M', 'J', 'P', 'G'), 10, Size(frame_width, frame_height));
     Mat frame, blob;
 
     try {
 
-        //outputFile = "./yolo_out_cpp.avi";
-        outputFile = "./yolo_out_cpp.jpg";
+        outputVideo = "./yolo_out_cpp.avi";
+        outputFile  = "./yolo_out_cpp.jpg";
 
         //outputFile = "yolo_out_cpp.mp4";
+        //outputFile = "yolo_out_cpp.mp4";
         std::cout << "outputFile " << outputFile << std::endl;
+        std::cout << "outputVideo " << outputVideo << std::endl;
         //if (parser.has("image"))
         //{
         //    // Open the image file
@@ -84,13 +88,13 @@ int helmetDetection(int argc, char** argv)
         //{
             // Open the video file
             //str = parser.get<String>("video");
-        str = "input1.mp4";
-        ifstream ifile(str);
-        if (!ifile) throw("error");
-        cap.open(str);
-        //str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.avi");
-        str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.jpg");
-        outputFile = str;
+        //str = "input1.mp4";
+        //ifstream ifile(str);
+        //if (!ifile) throw("error");
+        //cap.open(str);
+        ////str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.avi");
+        //str.replace(str.end() - 4, str.end(), "_yolo_out_cpp.jpg");
+        //outputFile = str;
         //}
         // Open the webcaom
         //else cap.open(parser.get<int>("device"));
@@ -105,6 +109,7 @@ int helmetDetection(int argc, char** argv)
   /*  if (!parser.has("image")) {
         video.open(outputFile, VideoWriter::fourcc('M', 'J', 'P', 'G'), 28, Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT)));
     }*/
+    //video.open(outputVideo, VideoWriter::fourcc('M', 'P', 'P', 'G'), 28, Size(cap.get(CAP_PROP_FRAME_WIDTH), cap.get(CAP_PROP_FRAME_HEIGHT)));
 
     // Create a window
     static const string kWinName = "Deep learning object detection in OpenCV";
@@ -136,22 +141,26 @@ int helmetDetection(int argc, char** argv)
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
     {
-        // get frame from the video
+        cout << "in while\n";
+       
         cap >> frame;
-        if (framecounter++ % 35 == 0) {
+     
+        cout << "in else framecounter " << framecounter - 1 << endl;
+        if (framecounter++ % 30 == 0) {
             // Stop the program if reached end of video
             //if (frame.empty()) {
-            if (framecounter > 100) {
+            if (framecounter > 200) {
                 std::cout << "Helmet!!!\n";
                 cout << "Done processing !!!" << endl;
                 cout << "Output file is stored as " << outputFile << endl;
+                cout << "Output video is stored as " << outputVideo << endl;
                 flag = false;
                 //waitKey(3000);
                 break;
             }
             else {
-                cout << "in else framecounter " << framecounter - 1 << endl;
-
+                cout << "in else framecounter!!!!! " << framecounter - 1 << endl;
+                cout << "1111\n";
                 // Create a 4D blob from a frame.
                 blobFromImage(frame, blob, 1 / 255.0, Size(inpWidth, inpHeight), Scalar(0, 0, 0), true, false);
 
@@ -164,33 +173,46 @@ int helmetDetection(int argc, char** argv)
 
                 // Remove the bounding boxes with low confidence
                 postprocess(frame, outs);
-
+                cout << "1111\n";
                 // Put efficiency information. The function getPerfProfile returns the overall time for inference(t) and the timings for each of the layers(in layersTimes)
                 vector<double> layersTimes;
                 double freq = getTickFrequency() / 1000;
                 double t = net.getPerfProfile(layersTimes) / freq;
                 string label = format("Inference time for a frame : %.2f ms", t);
                 putText(frame, label, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255));
-
+                cout << "22222\n";
                 // Write the frame with the detection boxes
                 Mat detectedFrame;
                 frame.convertTo(detectedFrame, CV_8U);
-                //if (parser.has("image")) imwrite(outputFile, detectedFrame);
-                //else video.write(detectedFrame);
-                //imwrite(outputFile, detectedFrame);
+                cout << "3333\n";
                 //video.write(detectedFrame);
-                imwrite(outputFile, detectedFrame);
+                //imwrite(outputFile, detectedFrame);
+                save_frame_in_image(frame, framecounter);
                 //imshow(kWinName, frame);
             }
         }
+        //video.write(frame);
+        //string save_image= "./yolo_out_cpp.jpg";
 
+       
     }
     cout << "after while\n";
-    //cap.release();
+    cap.release();
     //if (!parser.has("image")) video.release();
     video.release();
 
     return 0;
+}
+void save_frame_in_image(Mat& frame,size_t framecounter) {
+    cout << "save_frame_in_image\n";
+    std::stringstream ss;
+    ss << "frame" << framecounter << ".jpg";;
+
+
+    std::string save_image = ss.str();
+    cout << "save file " << save_image << endl;
+    imwrite(save_image, frame);
+
 }
 
 // Remove the bounding boxes with low confidence using non-maxima suppression
