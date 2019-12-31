@@ -14,10 +14,7 @@
 * [Technologies](#Technologies)
 
 ## Team members
-* Tamar
-* Shoam cohen
-* Efrat
-* Racheli sabo
+
 ## Our team
 
 * Tamar
