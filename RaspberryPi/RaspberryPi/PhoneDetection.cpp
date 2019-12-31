@@ -44,7 +44,7 @@ int phoneDetection(int argc, char** argv)
 {
     std::cout << "in phoneDetection\n";
 
-    string classesFile = "./coco1.names";
+    string classesFile = "./coco.names";
     ifstream ifs(classesFile.c_str());
     string line;
     while (getline(ifs, line)) classes.push_back(line);
@@ -110,7 +110,7 @@ int phoneDetection(int argc, char** argv)
         return -1;
     }
     //while (flag)
-    bool No_Helmet = false;
+    bool foundPhone = false;
     bool alarm_on = false;
     int num_frame_without_helmet = 0;
     clock_t begin = clock();
@@ -166,17 +166,17 @@ int phoneDetection(int argc, char** argv)
                 int num_detection = 0;
                 postprocess(frame, outs, num_detection, frame_height, frame_width);
 
-                std::cout << "******  detection helmet  " << num_detection << "   ******" << endl;
+                std::cout << "****** num detection phone  " << num_detection << "   ******" << endl;
                 end_detection = clock();
                 time_detection = (double(end_detection - begin_detection) / CLOCKS_PER_SEC) / 10;
                 cout << "time_detection " << time_detection << endl;
-                if (num_detection == 0) {//no helmet
+                if (num_detection>0) {//detecte phone
 
                     num_frame_without_helmet++;
                     system("omxplayer -o both alarm_cut.mp3");
                     cout << "num_frame_without_helmet " << num_frame_without_helmet << endl;
                     //if (num_frame_without_helmet >=1) {
-                    No_Helmet = true;
+                    foundPhone = true;
                     alarm_on = true;
 
                     //voiceOn();
@@ -240,12 +240,12 @@ int phoneDetection(int argc, char** argv)
 
 
     std::cout << "after while\n";
-    std::cout << "  No_Helmet in drive!!!" << No_Helmet << endl;
+    std::cout << "  foundPhone in drive!!!" << foundPhone << endl;
     std::cout << " test_num_of_detection_helmet" << test_num_of_detection_helmet << endl;
     end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout << "time elapsed_secs " << elapsed_secs << endl;
-    if (No_Helmet) {
+    if (foundPhone) {
         string s = "python3 postRest.py " + std::string(USER_ID) + " 0";
         system("python3 postRest.py 121212 0");
 
@@ -330,7 +330,7 @@ void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection, int f
                 confidences.push_back((float)confidence);
           
                     cout << "In the top half of the image\n";
-                    ++num_detection;
+                   /* ++num_detection;*/
               
 
                 boxes.push_back(Rect(left, top, width, height));
@@ -358,8 +358,12 @@ void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection, int f
     {
         int idx = indices[i];
         Rect box = boxes[idx];
-        drawPred(classIds[idx], confidences[idx], box.x, box.y,
-            box.x + box.width, box.y + box.height, frame, frame_width, frame_height);
+        if (classIds[idx] == 67) {
+            ++num_detection;
+            drawPred(classIds[idx], confidences[idx], box.x, box.y,
+                box.x + box.width, box.y + box.height, frame, frame_width, frame_height);
+        }
+   
     }
 }
 
@@ -379,7 +383,7 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
     string label = format("%.2f", conf);
     if (!classes.empty())
     {
-        CV_Assert(classId < (int)classes.size());
+        //CV_Assert(classId < (int)classes.size());
         label = classes[classId] + ":" + label;
     }
 
