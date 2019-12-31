@@ -14,7 +14,10 @@
 * [Technologies](#Technologies)
 
 ## ki
-
+* Tamar
+* Shoam cohen
+* Efrat
+* Racheli sabo
 ## Our team
 
 * Tamar
