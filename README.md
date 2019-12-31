@@ -1,4 +1,8 @@
 # SafeRide
+<br />
+<p align="center">
+    <img src="front_end/images/image.jpg"  alt="Logo" width="400" height="350">
+</p>
 ```sh
  Identify wearing a helmet when riding a bicycle or scooter
 ```
@@ -28,7 +32,7 @@
 
 <br />
 <p align="center">
-    <img src="front_end/images/1.jpg"  alt="Logo" width="400" height="350">
+    <img src="front_end/images/image.jpg"  alt="Logo" width="400" height="350">
 </p>
 
 ## Technologies
