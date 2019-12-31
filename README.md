@@ -14,6 +14,8 @@
 * [Technologies](#Technologies)
 
 ## members
+* Tamar
+* Shoam
 
 ## Our team
 
