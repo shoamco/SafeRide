@@ -8,12 +8,12 @@
 
 ## content:
 
-* [ki](#ki)
+* [Team members](#Team members)
 * [About the Project](#about-the-project)
 * [Our team](#Our team)
 * [Technologies](#Technologies)
 
-## ki
+## Team members
 * Tamar
 * Shoam cohen
 * Efrat
