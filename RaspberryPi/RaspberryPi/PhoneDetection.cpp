@@ -112,7 +112,7 @@ int phoneDetection(int argc, char** argv)
     //while (flag)
     bool foundPhone = false;
     bool alarm_on = false;
-    int num_frame_without_helmet = 0;
+    int num_frame_with_phone = 0;
     clock_t begin = clock();
 
     clock_t end;
@@ -170,15 +170,15 @@ int phoneDetection(int argc, char** argv)
                 end_detection = clock();
                 time_detection = (double(end_detection - begin_detection) / CLOCKS_PER_SEC) / 10;
                 cout << "time_detection " << time_detection << endl;
-                if (num_detection>0) {//detecte phone
+                if (num_detection>=1) {//detecte phone
 
-                    num_frame_without_helmet++;
+                    num_frame_with_phone++;
                     system("omxplayer -o both alarm_cut.mp3");
-                    cout << "num_frame_without_helmet " << num_frame_without_helmet << endl;
-                    //if (num_frame_without_helmet >=1) {
+                    cout << "num_frame_with_phone " << num_frame_with_phone << endl;
+                    //if (num_frame_with_phone >=1) {
                     foundPhone = true;
                     alarm_on = true;
-
+                    test_num_of_detection_helmet++;
                     //voiceOn();
                   /*  pthread_t thread_alart;
                     thread_alart_vector.push_back(thread_alart);
@@ -193,9 +193,9 @@ int phoneDetection(int argc, char** argv)
 
                 }
 
-                else {
-                    test_num_of_detection_helmet++;
-                    num_frame_without_helmet = 0;
+                else {//no detecte phone in the frame
+                 
+                    num_frame_with_phone = 0;
                     alarm_on = false;
                     /*   for (int i = 0; i < thread_alart_vector.size(); i++) {
                            pthread_join(thread_alart_vector[i], NULL);
@@ -319,26 +319,32 @@ void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection, int f
             //cout << "confidence " << confidence << endl;
             if (confidence > confThreshold)
             {
+                cout << "classIdPoint " << classIdPoint << endl;
+                cout << " classIdPoint.x " << classIdPoint.x << endl;
+                if (classIdPoint.x == 67) {
+                    cout << "detect phone **********!!!!\n";
+                    ++num_detection;
 
-                int centerX = (int)(data[0] * frame.cols);
-                int centerY = (int)(data[1] * frame.rows);
-                int width = (int)(data[2] * frame.cols);
-                int height = (int)(data[3] * frame.rows);
-                int left = centerX - width / 2;
-                int top = centerY - height / 2;
-                classIds.push_back(classIdPoint.x);
-                confidences.push_back((float)confidence);
-          
+                    int centerX = (int)(data[0] * frame.cols);
+                    int centerY = (int)(data[1] * frame.rows);
+                    int width = (int)(data[2] * frame.cols);
+                    int height = (int)(data[3] * frame.rows);
+                    int left = centerX - width / 2;
+                    int top = centerY - height / 2;
+                    classIds.push_back(classIdPoint.x);
+                    confidences.push_back((float)confidence);
+
                     cout << "In the top half of the image\n";
-                   /* ++num_detection;*/
-              
+                    /* ++num_detection;*/
 
-                boxes.push_back(Rect(left, top, width, height));
 
-                /*    }*/
-                   /* else {
-                        boxes_down_helmet.push_back(Rect(left, top, width, height));;
-                    }*/
+                    boxes.push_back(Rect(left, top, width, height));
+
+                    /*    }*/
+                       /* else {
+                            boxes_down_helmet.push_back(Rect(left, top, width, height));;
+                        }*/
+                }
             }
             /*   else
                {
@@ -358,11 +364,11 @@ void  postprocess(Mat& frame, const vector<Mat>& outs, int& num_detection, int f
     {
         int idx = indices[i];
         Rect box = boxes[idx];
-        if (classIds[idx] == 67) {
-            ++num_detection;
+        //if (classIds[idx] == 67) {
+             //++num_detection;
             drawPred(classIds[idx], confidences[idx], box.x, box.y,
                 box.x + box.width, box.y + box.height, frame, frame_width, frame_height);
-        }
+        //}
    
     }
 }
