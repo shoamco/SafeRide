@@ -8,7 +8,7 @@
 
 ## content:
 
-* [Our team:](#Our team)
+* [Our team:](#Our team:)
 * [About the Project](#about-the-project)
 * [Technologies](#Technologies)
 
