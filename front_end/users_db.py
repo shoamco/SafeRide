@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, url_for, flash, redirect
 from flask_mongoengine import MongoEngine
 import mongoengine as me
-import os
 import base64
 
 ################ forms ################
@@ -61,16 +60,14 @@ class User(me.Document):
 
 @app.route('/user_window/<current_user_id>', methods=['GET', 'POST'])
 def user_window(current_user_id):
-    # if request.method == 'POST':
-    # user_id = request.form.get('current_user_id')
     user = User.objects(user_id=int(current_user_id))
     if user:
         user = user.get(user_id=int(current_user_id))
         calc_points = user.positive_points - user.negative_points
         if calc_points > 0:
-            return render_template("user_interface.html", num=calc_points % 10, name=user.name)
+            return render_template("user_interface2.html", num=calc_points % 10, name=user.name)
         else:
-            return render_template("user_interface.html", num=0, name=user.name)
+            return render_template("user_interface2.html", num=0, name=user.name)
 
 
 @app.route('/add_user', methods=['POST', 'GET'])
@@ -107,12 +104,12 @@ def update_user():
     return "NOT GET OT POST METHOD WERE USED"
 
 
-@app.route('/')
+#@app.route('/')
 @app.route('/users')
 def users_table_show():
     return render_template("index.html", users=User.objects())
 
-
+#<body style="background-color:#E6E6FA">
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -141,44 +138,24 @@ def login():
             password = user.password
             if form.password.data == password:
                 return user_window(user_id)
-                # return redirect(url_for(f'user_window/{user_id}'))
-
-    #     if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-    #         flash('You have been logged in!', 'success')
-    #         return redirect(url_for('users'))
-    #     else:
-    #         flash('Login Unsuccessful. Please check username and password', 'danger')
+        else:
+            flash('Not Found!', 'danger')
+            return render_template('login.html', title='Login', form=form)
     return render_template('login.html', title='Login', form=form)
 
 
-# @app.route("/show_image", methods=['GET', 'POST'])
-# def show_image():
-#     if request.method == "POST":
-#
-#         if request.files:
-#             image = request.files["image"]
-#
-#             image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
-#
-#             print("Image saved")
-#
-#             return redirect(request.url)
-#
-#     return render_template("upload_image.html")
-
 @app.route("/upload_image", methods=["POST"])
 def upload_image():
-    jsn = request.get_json()
-    img = jsn['img']
-    #cropped = jsn['cropped']
-    img_name = jsn['img_name']
-    img_name += '.jpg'
-    imgdata = base64.b64decode(img)
-    #crpdata = base64.b64decode(cropped)
-    with open(f'images/{img_name}', 'wb') as f:
-        f.write(imgdata)
-        #c.write(crpdata)
-    return "got the image!"
+    if request.method == 'POST':
+        jsn = request.get_json()
+        img = jsn['img']
+        img_name = jsn['img_name']
+        with_helmet = jsn['with_helmet']  #send email
+        imgdata = base64.b64decode(img)
+
+        with open(f'images\\{img_name}.jpg', 'wb') as f:
+            f.write(imgdata)
+        return "got the image!"
 
 
 if __name__ == '__main__':

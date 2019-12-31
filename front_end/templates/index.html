@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+body{
+    background-image: url("https://scooterpartner.com/wp-content/uploads/2018/06/helmet-electric-scooter.jpg");
+    background-repeat: repeat;
+    background-size: cover;
+    background-color:transparent;
+}
+tr:hover {background-color: #f1eaea52;}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+</style>
 <head>
     <title>Table V01</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='util.css') }}">
+    <link rel="stylesheet" type="text/css" href="C:\Users\tamar\Desktop\bootcamp\final\users\final-hackathon-tamar-racheli-shoam-efrat\front_end\static\util.css">
+
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <!--===============================================================================================-->
 </head>
@@ -14,18 +36,18 @@
 
 
 <div class="limiter">
-    <div class="container-table100">
+    <div class="container-table100" style="background-color:#fff6; border-radius: 25px;">
         <div class="wrap-table100">
             <div class="table100">
                 <table>
                     <thead>
                     <tr class="table100-head">
-						<th class="column1">User ID</th>
+						<th class="column1" >User ID</th>
                         <th class="column2">Name</th>
                         <th class="column3">Email</th>
                         <th class="column4">Password</th>
                         <th class="column5">Phone</th>
-                         <th class="column6">Num Trips</th>
+                         <th class="column6">Num Of Rides</th>
                         <th class="column7">Positive Points</th>
 						<th class="column8">Negative Points</th>
                     </tr>
