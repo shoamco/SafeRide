@@ -1,3 +1,5 @@
+from twilio.rest import Client
+import os
 from flask import Flask, request, render_template, url_for, flash, redirect
 from flask_mongoengine import MongoEngine
 import mongoengine as me
@@ -85,31 +87,57 @@ def add_user():
     return "NOT GET OT POST METHOD WERE USED"
 
 
+def get_name_and_phone_by_user_id(user_id):
+    user = User.objects(user_id=int(user_id))
+    user = user.get(user_id=int(user_id))
+    return user.name, user.phone
+
+
+def sendMessage(user_id):
+    name, phone = get_name_and_phone_by_user_id(user_id)
+    try:
+        client = Client(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+
+        number_dest = f"+972{phone}"
+        message = client.messages \
+            .create(
+            body=f'Hi {name}! we found you rode without helmet today. for your safety- please note it. SafeRide:) ',
+            from_='+14805264302',
+            to=number_dest
+        )
+    except:
+        print("Failed to send SMS")
+
+
 @app.route('/update_user', methods=['POST'])
 def update_user():
     if request.method == 'POST':
         user_id = request.form.get('user_id')
         is_positive = request.form.get('is_positive')
         user = User.objects(user_id=user_id)
+        print(f'user:{user} is_positive:{is_positive}')
         if user:
             user = user.get(user_id=user_id)
             user.num_trips += 1
+            print(f'is_positive: {is_positive}, user_id: {user_id}')
             if int(is_positive) == 1:
                 user.positive_points += 1
             else:
                 user.negative_points += 1
+                sendMessage(user_id)
 
         user.save()
         return f"hello {user_id}, {is_positive} !"
     return "NOT GET OT POST METHOD WERE USED"
 
 
-#@app.route('/')
+# @app.route('/')
 @app.route('/users')
 def users_table_show():
     return render_template("index.html", users=User.objects())
 
-#<body style="background-color:#E6E6FA">
+
+# <body style="background-color:#E6E6FA">
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -150,8 +178,22 @@ def upload_image():
         jsn = request.get_json()
         img = jsn['img']
         img_name = jsn['img_name']
-        with_helmet = jsn['with_helmet']  #send email
+        with_helmet = jsn['with_helmet']  # send email
         imgdata = base64.b64decode(img)
+
+        if with_helmet == 0:
+            try:
+                client = Client(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+
+                message = client.messages \
+                    .create(
+                    body='היי שהם. מצאנו אותך רוכבת ללא קסדה! אנא היזהרי עבור בטיחותך לפעם הבאה:)',
+                    from_='+14805264302',
+                    # media_url=['C:\\excellenteam\\downloads\\helmet.jpg'],
+                    to='+9720526064628'
+                )
+            except:
+                print("Failed to send SMS")
 
         with open(f'images\\{img_name}.jpg', 'wb') as f:
             f.write(imgdata)
