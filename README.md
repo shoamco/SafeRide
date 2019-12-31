@@ -3,7 +3,6 @@
 ```sh
  Identify wearing a helmet when riding a bicycle or scooter
 ```
-
 <https://t.me/{BOT_ID}>
 
 
@@ -21,7 +20,18 @@
 
 
 ## About the Project
+### Review:
+The purpose of the project is to check if the passenger is wearing a helmet during the riding, and start warning if not.
 
+### Audience:
+* Rental companies.
+* Parents.
+* Optional: Police.
+
+### Technological challenges:
+* face detection
+* Identify an helmet.
+*
 
 
 ## Screenshots
