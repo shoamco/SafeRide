@@ -1,11 +1,11 @@
 # SafeRide
 <https://t.me/{BOT_ID}>
 
-{Identify wearing a helmet when riding a bicycle or scooter} 
+# Identify wearing a helmet when riding a bicycle or scooter
 
-##our team:
+## Our team:
 * Tamar
-* {Shoam cohen}
+* Shoam cohen
 * Efrat
 * Racheli sabo
 
