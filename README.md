@@ -8,12 +8,12 @@
 
 ## content:
 
-* [members](#members)
+* [Team Members](#members)
 * [About the Project](#about-the-project)
 * [Our team](#Our team)
 * [Technologies](#Technologies)
 
-## members
+## Team Members
 * Tamar
 * Shoam
 
