@@ -1,14 +1,18 @@
 # SafeRide
 <https://t.me/{BOT_ID}>
 
-# Identify wearing a helmet
-# when riding a bicycle or scooter
+
+```sh
+Identify wearing a helmet when riding a bicycle or scooter
+```
+
 
 
 ## content:
 
-* [Our team](#our team)
+* [Our team](#Our team)
 * [About the Project](#about-the-project)
+* [Technologies](#Technologies)
 
 
 
@@ -27,7 +31,11 @@
 
 ![SCREESHOT DECSRIPTION](screenshots/shopping-list-bot-1.png)
 
-## How to Run This Bot
+
+## Technologies
+
+
+
 ### Prerequisites
 * Python 3.7
 * pipenv
