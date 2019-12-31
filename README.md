@@ -1,13 +1,13 @@
-# Safe-Scooter
-Final Hackhathon
-# {YOUR BOT NAME HERE}
+# SafeRide
 <https://t.me/{BOT_ID}>
 
-{ONE LINE BOT DESCRIPTION HERE} 
+{Identify wearing a helmet when riding a bicycle or scooter} 
 
-* {Participant 1 Name}
-* {Participant 2 Name}
-* {Participant 3 Name}
+##our team:
+* Tamar
+* {Shoam cohen}
+* Efrat
+* Racheli sabo
 
 {OPTIONAL: MORE PROJECT INFO HERE}
 
