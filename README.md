@@ -1,7 +1,16 @@
 # SafeRide
 <https://t.me/{BOT_ID}>
 
-# Identify wearing a helmet when riding a bicycle or scooter
+# Identify wearing a helmet
+# when riding a bicycle or scooter
+
+
+## content:
+
+* [Our team](#our team)
+* [About the Project](#about-the-project)
+
+
 
 ## Our team:
 * Tamar
@@ -9,7 +18,10 @@
 * Efrat
 * Racheli sabo
 
-{OPTIONAL: MORE PROJECT INFO HERE}
+
+## About the Project
+
+
 
 ## Screenshots
 
