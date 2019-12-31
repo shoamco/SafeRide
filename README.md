@@ -1,5 +1,5 @@
-# SafeRide
-<img src="front_end/images/1.jpg" alt="Logo" width="80" height="80">
+
+# SafeRide   <img src="front_end/images/1.jpg" alt="Logo" width="80" height="80">
 ```sh
  Identify wearing a helmet when riding a bicycle or scooter
 ```
