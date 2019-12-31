@@ -1,12 +1,8 @@
-# SafeRide
-```sh
-## Identify wearing a helmet when riding a bicycle or scooter
+# SafeRide```sh
+ Identify wearing a helmet when riding a bicycle or scooter
 ```
+
 <https://t.me/{BOT_ID}>
-
-
-
-
 
 
 ## content:
