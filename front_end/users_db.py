@@ -65,9 +65,9 @@ def user_window(current_user_id):
         user = user.get(user_id=int(current_user_id))
         calc_points = user.positive_points - user.negative_points
         if calc_points > 0:
-            return render_template("user_interface.html", num=calc_points % 10, name=user.name)
+            return render_template("user_interface2.html", num=calc_points % 10, name=user.name)
         else:
-            return render_template("user_interface.html", num=0, name=user.name)
+            return render_template("user_interface2.html", num=0, name=user.name)
 
 
 @app.route('/add_user', methods=['POST', 'GET'])
