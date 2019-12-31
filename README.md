@@ -30,7 +30,7 @@
 
 <br />
 <p align="center">
-    <img src="C:\Users\RENT\Desktop\distanceTransform\1.jpg" alt="Logo" width="80" height="80">
+    <img src="front_end/images/frame1.jpg"  alt="Logo" width="80" height="80">
 </p>
 
 
