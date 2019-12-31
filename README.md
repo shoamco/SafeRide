@@ -15,7 +15,9 @@
 
 ## Team Members
 * Tamar
-* Shoam
+* Shoam cohen
+* Efrat
+* Racheli sabo
 
 ## Our team
 
