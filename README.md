@@ -8,13 +8,15 @@
 
 ## content:
 
-* [Our team](#Our team)
+
 * [About the Project](#about-the-project)
+* [Our team](#Our team)
 * [Technologies](#Technologies)
 
 
 
 ## Our team
+
 * Tamar
 * Shoam cohen
 * Efrat
