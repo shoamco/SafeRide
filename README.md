@@ -28,7 +28,7 @@
 
 <br />
 <p align="center">
-    <img src="front_end/images/image.jpg"  alt="Logo" width="200" height="200">
+    <img src="front_end/images/image.jpg"  alt="Logo" width="400" height="350">
 </p>
 
 ## Technologies
