@@ -104,12 +104,12 @@ def update_user():
     return "NOT GET OT POST METHOD WERE USED"
 
 
-@app.route('/')
+#@app.route('/')
 @app.route('/users')
 def users_table_show():
     return render_template("index.html", users=User.objects())
 
-
+#<body style="background-color:#E6E6FA">
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
