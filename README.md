@@ -1,4 +1,5 @@
-# SafeRide```sh
+# SafeRide
+```sh
  Identify wearing a helmet when riding a bicycle or scooter
 ```
 
@@ -27,7 +28,10 @@
 ## Screenshots
 
 ![SCREESHOT DECSRIPTION](screenshots/shopping-list-bot-1.png)
-
+<br />
+<p align="center">
+    <img src="C:\Users\RENT\Desktop\distanceTransform\1.jpg" alt="Logo" width="80" height="80">
+</p>
 
 ## Technologies
 
