@@ -10,17 +10,9 @@
 
 * [Team Members](#members)
 * [About the Project](#about-the-project)
-* [Our team](#Our team)
 * [Technologies](#Technologies)
 
 ## Team Members
-* Tamar
-* Shoam cohen
-* Efrat
-* Racheli sabo
-
-## Our team
-
 * Tamar
 * Shoam cohen
 * Efrat
@@ -39,11 +31,9 @@
     <img src="front_end/images/frame1.jpg"  alt="Logo" width="80" height="80">
 </p>
 
-
-
-
 ## Technologies
-
+* [MongoDB](https://www.mongodb.com/)
+* [Flask](http://flask.palletsprojects.com/en/1.1.x/)
 
 
 ### Prerequisites
