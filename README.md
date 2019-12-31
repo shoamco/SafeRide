@@ -22,6 +22,7 @@
 ## About the Project
 ### Review:
 The purpose of the project is to check if the passenger is wearing a helmet during the riding, and start warning if not.
+for this, we used the Raspberry pi camera.
 
 ### Audience:
 * Rental companies.
@@ -31,7 +32,12 @@ The purpose of the project is to check if the passenger is wearing a helmet duri
 ### Technological challenges:
 * face detection
 * Identify an helmet.
-*
+* Turn on alarm.
+* Create a website for customers.
+* work with Raspberry pi.
+
+### expansion:
+- When 
 
 
 ## Screenshots
