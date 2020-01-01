@@ -13,9 +13,9 @@
 * [Technologies](#Technologies)
 
 ## Team Members
-* Tamar
+* Tamar appleboim
 * Shoam cohen
-* Efrat
+* Efrat kopelowitz
 * Racheli sabo
 
 
