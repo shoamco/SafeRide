@@ -3,15 +3,14 @@
 ```sh
  Identify wearing a helmet when riding a bicycle or scooter
 ```
-<https://t.me/{BOT_ID}>
 
 
 ## content:
 
 * [Team Members](#members)
 * [About the Project](#about-the-project)
-* [Technologies](#Technologies)
 * [Screenshots](#Screenshots)
+* [Technologies](#Technologies)
 
 ## Team Members
 * Tamar
