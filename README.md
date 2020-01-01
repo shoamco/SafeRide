@@ -56,6 +56,8 @@ with a picture of him without a helmet!
 * [Raspberry Pi](https://en.wikipedia.org/wiki/Raspberry_Pi)
 * [Flask](http://flask.palletsprojects.com/en/1.1.x/)
 * [MongoDB](https://www.mongodb.com/)
+* [Yolo](https://pjreddie.com/darknet/yolo/)
+* [opencv](https://opencv.org/)
 
 
 ### Prerequisites
