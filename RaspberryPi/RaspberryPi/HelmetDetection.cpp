@@ -5,10 +5,10 @@
 using namespace cv;
 using namespace dnn;
 using namespace std;
-
+string  USER_ID = "121212";
 std::vector<pthread_t> thread_alart_vector;
 // Initialize the parameters
-float confThreshold = 0.6; // Confidence threshold
+float confThreshold = 0.78; // Confidence threshold
 float nmsThreshold = 0.4;  // Non-maximum suppression threshold
 int inpWidth = 416;  // Width of network's input image
 int inpHeight = 416; // Height of network's input image
@@ -23,7 +23,7 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 // Get the names of the output layers
 vector<String> getOutputsNames(const Net& net);
 //void detectionInHelmtFrame(Mat& frame, Mat& blob, const Net& net, CommandLineParser& parser, VideoWriter& video, string& outputFile);
-void save_frame_in_image(Mat& frame, size_t framecounter);
+void save_frame_in_image(Mat& frame, size_t framecounter, bool& flag);
 void* alarmOn(void* id) {
     std::cout << "in alarmOn\n";
     system("omxplayer -o both alarm_cut.mp3");
@@ -111,6 +111,7 @@ int helmetDetection(int argc, char** argv)
     //while (flag)
     bool No_Helmet = false;
     bool alarm_on = false;
+    bool saveImageTrafficViolation = false;
     int num_frame_without_helmet=0;
     clock_t begin = clock();
 
@@ -139,7 +140,7 @@ int helmetDetection(int argc, char** argv)
                 // Stop the program if reached end of video
                 //if (frame.empty()) {
                 //if (framecounter > 200) {
-            if (framecounter > 10) {
+            if (framecounter >10) {
 
                 std::cout << "Done processing !!!" << endl;
               
@@ -165,18 +166,23 @@ int helmetDetection(int argc, char** argv)
                 int num_detection = 0;
                 postprocess(frame, outs, num_detection,  frame_height,frame_width);
                 
-                std::cout << "detection helmet(num_detection) " << num_detection << endl;
+                std::cout << "******  detection helmet  " << num_detection <<"   ******"<< endl;
                 end_detection = clock();
                  time_detection = (double(end_detection - begin_detection) / CLOCKS_PER_SEC) / 10;
                 cout << "time_detection " << time_detection << endl;
                 if (num_detection == 0) {//no helmet
 
                     num_frame_without_helmet++;
+                    //system("omxplayer -o both alarm_cut.mp3");
+                    cout << "********************in alarm_on\n";
+
+                    //system("omxplayer -o both alarm_short.mp3");
                     system("omxplayer -o both alarm_cut.mp3");
                     cout << "num_frame_without_helmet " << num_frame_without_helmet << endl;
                     //if (num_frame_without_helmet >=1) {
                         No_Helmet = true; 
                         alarm_on = true;
+                        saveImageTrafficViolation = true;
                        
                         //voiceOn();
                       /*  pthread_t thread_alart;
@@ -196,6 +202,7 @@ int helmetDetection(int argc, char** argv)
                     test_num_of_detection_helmet++;
                     num_frame_without_helmet = 0;
                     alarm_on = false;
+                    cout << "no phone alarm_on" << alarm_on << endl;
                  /*   for (int i = 0; i < thread_alart_vector.size(); i++) {
                         pthread_join(thread_alart_vector[i], NULL);
                     }*/
@@ -215,7 +222,7 @@ int helmetDetection(int argc, char** argv)
 
                 //video.write(detectedFrame);
                 //imwrite(outputFile, detectedFrame);
-                save_frame_in_image(frame, framecounter);
+                save_frame_in_image(frame, framecounter, saveImageTrafficViolation);
 
                 end_save_frame = clock();
                 time_save_frame = (double(end_save_frame - begin_save_frame) / CLOCKS_PER_SEC) / 10;
@@ -225,8 +232,11 @@ int helmetDetection(int argc, char** argv)
           
         }
         if (alarm_on) {
+            cout << "***********in alarm_on\n";
+
+            //system("omxplayer -o both alarm_short.mp3");
             //voiceOn();
-            system("omxplayer -o both alarm_cut.mp3");
+system("omxplayer -o both alarm_cut.mp3");
         }
     }
         //}
@@ -245,11 +255,12 @@ int helmetDetection(int argc, char** argv)
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     std::cout << "time elapsed_secs " << elapsed_secs << endl;
     if (No_Helmet) {
-        system("python3 postRest.py 121212 0");
+        string s = "python3 postRest.py "+std::string(USER_ID) + " 0";
+        system("python3 postRest.py 313611352 0");
 
     }
     else {//all drive with helmet
-        system("python3 postRest.py 121212 1");
+        system("python3 postRest.py 313611352 1");
     }
     cap.release();
     //if (!parser.has("image")) video.release();
@@ -260,13 +271,30 @@ int helmetDetection(int argc, char** argv)
     }
     return 0;
 }
-void save_frame_in_image(Mat& frame, size_t framecounter) {
+void save_frame_in_image(Mat& frame, size_t framecounter,bool &flag) {
+
+    // current date/time based on current system
+    time_t now = time(0);
+
+    // convert now to string form
+    char* dt = ctime(&now);
+
+    cout << "The local date and time is: " << dt << endl;
     cout << "save_frame_in_image\n";
     std::stringstream ss;
-    ss << "frame" << framecounter << ".jpg";;
+    //ss << dt << ".jpg";
+    //ss << dt<<".jpg";
+    ss << "helmet"<< framecounter<<".jpg";
 
 
     std::string save_image = ss.str();
+    if (flag) {
+        flag = false;
+        save_image = "Traffic violation.jpg";
+    }
+
+
+
     cout << "save file " << save_image << endl;
     imwrite(save_image, frame);
 
@@ -349,9 +377,11 @@ void drawPred(int classId, float conf, int left, int top, int right, int bottom,
 
     //Draw a rectangle displaying the bounding box
     rectangle(frame, Point(left, top), Point(right, bottom), Scalar(255, 178, 50), 3);
+    //rectangle(frame, Point(0, frame_width), Point(0, frame_height), Scalar(255, 178, 50), 3);
 
     // line for x1, y1, x2, y2 
     //line(0,  frame_height/2, frame_width, frame_height/2);
+
 
     //Get the label for the class name and its confidence
     string label = format("%.2f", conf);

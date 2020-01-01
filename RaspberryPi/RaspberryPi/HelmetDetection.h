@@ -9,4 +9,5 @@
 #include <ctime>
 #include <unistd.h>
 #include<pthread.h>
+#include <ctime>
 int helmetDetection(int argc, char** argv);

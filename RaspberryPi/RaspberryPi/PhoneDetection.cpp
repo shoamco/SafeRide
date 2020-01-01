@@ -24,9 +24,11 @@ static void drawPred(int classId, float conf, int left, int top, int right, int 
 // Get the names of the output layers
 static vector<String> getOutputsNames(const Net& net);
 //void detectionInHelmtFrame(Mat& frame, Mat& blob, const Net& net, CommandLineParser& parser, VideoWriter& video, string& outputFile);
-static void save_frame_in_image(Mat& frame, size_t framecounter);
+static void save_frame_in_image(Mat& frame, size_t framecounter, bool& flag);
 static void* alarmOn(void* id) {
     std::cout << "in alarmOn\n";
+    cout << "********************in alarm_on\n";
+
     system("omxplayer -o both alarm_cut.mp3");
     return NULL;
 }
@@ -112,6 +114,7 @@ int phoneDetection(int argc, char** argv)
     //while (flag)
     bool foundPhone = false;
     bool alarm_on = false;
+    bool saveImageTrafficViolation = false;
     int num_frame_with_phone = 0;
     clock_t begin = clock();
 
@@ -119,10 +122,13 @@ int phoneDetection(int argc, char** argv)
     clock_t begin_detection;
     clock_t end_detection;
     clock_t begin_save_frame;
-    clock_t end_save_frame;
+    clock_t end_save_frame; 
+    clock_t begin_sound;
+    clock_t end_sound;
     double time_frame;
     double time_detection;
     double time_save_frame;
+    double time_sound;
     int test_num_of_detection_helmet = 0;
     while (cap.read(frame) && flag == true)
         //while (waitKey(1) < 0)
@@ -130,6 +136,7 @@ int phoneDetection(int argc, char** argv)
 
         //sleep(5);
         end = clock();
+       
         time_frame = (double(end - begin) / CLOCKS_PER_SEC) * 100;
         //std::cout << "time  " << time_frame << endl;
         if (int(time_frame) % 4 == 0) {
@@ -144,7 +151,7 @@ int phoneDetection(int argc, char** argv)
 
                 std::cout << "Done processing !!!" << endl;
 
-
+               
                 flag = false;
                 //waitKey(3000);
                 break;
@@ -173,11 +180,14 @@ int phoneDetection(int argc, char** argv)
                 if (num_detection>=1) {//detecte phone
 
                     num_frame_with_phone++;
+                    begin_sound = clock();
+                    cout << "********************in alarm_on\n";
                     system("omxplayer -o both alarm_cut.mp3");
                     cout << "num_frame_with_phone " << num_frame_with_phone << endl;
                     //if (num_frame_with_phone >=1) {
                     foundPhone = true;
                     alarm_on = true;
+                    saveImageTrafficViolation = true;
                     test_num_of_detection_helmet++;
                     //voiceOn();
                   /*  pthread_t thread_alart;
@@ -200,6 +210,10 @@ int phoneDetection(int argc, char** argv)
                     /*   for (int i = 0; i < thread_alart_vector.size(); i++) {
                            pthread_join(thread_alart_vector[i], NULL);
                        }*/
+                    end_sound = clock();
+              
+                    time_save_frame = (double(end_sound - begin_sound) / CLOCKS_PER_SEC) / 10;
+                    cout << "time sound " << time_save_frame << endl;
 
                 }
                 begin_save_frame = clock();
@@ -216,7 +230,7 @@ int phoneDetection(int argc, char** argv)
 
                 //video.write(detectedFrame);
                 //imwrite(outputFile, detectedFrame);
-                save_frame_in_image(frame, framecounter);
+                save_frame_in_image(frame, framecounter, saveImageTrafficViolation);
 
                 end_save_frame = clock();
                 time_save_frame = (double(end_save_frame - begin_save_frame) / CLOCKS_PER_SEC) / 10;
@@ -227,6 +241,7 @@ int phoneDetection(int argc, char** argv)
         }
         if (alarm_on) {
             //voiceOn();
+            cout << "********************in alarm_on 22222222\n";
             system("omxplayer -o both alarm_cut.mp3");
         }
     }
@@ -247,11 +262,11 @@ int phoneDetection(int argc, char** argv)
     std::cout << "time elapsed_secs " << elapsed_secs << endl;
     if (foundPhone) {
         string s = "python3 postRest.py " + std::string(USER_ID) + " 0";
-        system("python3 postRest.py 121212 0");
+        system("python3 postRest.py 313611352 0");
 
     }
     else {//all drive with helmet
-        system("python3 postRest.py 121212 1");
+        system("python3 postRest.py 313611352 1");
     }
     cap.release();
     //if (!parser.has("image")) video.release();
@@ -262,7 +277,7 @@ int phoneDetection(int argc, char** argv)
     }
     return 0;
 }
-void save_frame_in_image(Mat& frame, size_t framecounter) {
+void save_frame_in_image(Mat& frame, size_t framecounter, bool& flag) {
 
     // current date/time based on current system
     time_t now = time(0);
@@ -275,19 +290,15 @@ void save_frame_in_image(Mat& frame, size_t framecounter) {
     std::stringstream ss;
     //ss << dt << ".jpg";
     //ss << dt<<".jpg";
-    ss << "phone frame" << framecounter << ".jpg";
+    ss << "phone" << framecounter << ".jpg";
 
 
     std::string save_image = ss.str();
-    //std::string save_image = dt;
-    //std::replace(save_image.begin(), save_image.end(), ':', 'I');  // replace ':' by ' '
-    //std::replace(save_image.begin(), save_image.end(), ' ', 'I');  // replace ':' by ' '
-    //save_image += ".jpg";
-  /*  vector<int> array;
-    stringstream ss(save_image);
-    int temp;
-    while (ss >> temp)
-        array.push_back(temp);*/
+    if (flag) {
+        flag = false;
+        save_image = "Traffic violation.jpg";
+    }
+
 
 
     cout << "save file " << save_image << endl;
