@@ -13,10 +13,10 @@
 * [Technologies](#Technologies)
 
 ## Team Members
-* Tamar appleboim
-* Shoam cohen
-* Efrat kopelowitz
-* Racheli sabo
+* Tamar Appleboim
+* Shoam Cohen
+* Efrat Kopelowitz
+* Racheli Sabo
 
 
 ## About the Project
@@ -58,10 +58,7 @@ with a picture of him without a helmet!
 * [opencv](https://opencv.org/)
 
 
-### Prerequisites
-* Python 3.7
-* pipenv
-* {ADD MORE DEPENDENCIES HERE - FOR EXAMPLE MONGODB OR ANYTHING ELSE}
+
 
 
 
