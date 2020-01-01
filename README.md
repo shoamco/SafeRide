@@ -1,7 +1,7 @@
 
 # SafeRide   <img src="front_end/images/1.jpg" alt="Logo" width="80" height="80">
 ```sh
- Identify wearing a helmet when riding a bicycle or scooter
+ Identify wearing an helmet when riding an electric bicycle or scooter
 ```
 
 
@@ -21,8 +21,8 @@
 
 ## About the Project
 ### Review:
-The purpose of the project is to check if the passenger is wearing a helmet during the riding, and start warning if not.
-for this, we used the Raspberry pi camera.
+The purpose of the project is to check if the passenger is wearing a helmet during the riding, and start warning if not. The system also detcet using cellphone while riding. 
+For this, we used the Raspberry pi camera.
 
 ### Audience:
 * Rental companies.
