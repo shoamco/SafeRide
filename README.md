@@ -30,8 +30,7 @@ for this, we used the Raspberry pi camera.
 * Optional: Police.
 
 ### Technological challenges:
-* face detection
-* Identify an helmet.
+* Helmet and Phone detection
 * Turn on alarm.
 * Create a website for customers.
 * work with Raspberry pi.
