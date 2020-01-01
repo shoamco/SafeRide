@@ -105,13 +105,13 @@ def update_user():
     return "NOT GET OT POST METHOD WERE USED"
 
 
-# @app.route('/')
+
 @app.route('/users')
 def users_table_show():
     return render_template("index.html", users=User.objects())
 
 
-# <body style="background-color:#E6E6FA">
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -150,28 +150,29 @@ def login():
 def upload_image():
     if request.method == 'POST':
         jsn = request.get_json()
-        img = jsn['img']
-        img_name = jsn['img_name']
-        user_id = jsn['user_id']
         is_positive = jsn['is_positive']  # send email
-        imgdata = base64.b64decode(img)
+        if int(is_positive) == 0:
+            user_id = jsn['user_id']
+            img = jsn['img']
+            img_name = jsn['img_name']
+            imgdata = base64.b64decode(img)
 
-        user = User.objects(user_id=int(user_id))
-        print(f'user :{user}')
-        if user:
-            image_path = f'images\\{img_name}.jpg'
-            with open(image_path, 'wb') as f:
-                f.write(imgdata)
+            user = User.objects(user_id=int(user_id))
+            print(f'user :{user}')
+            if user:
+                print(f'user :{user}')
+                image_path = f'images\\{img_name}.jpg'
+                with open(image_path, 'wb') as f:
+                    f.write(imgdata)
 
-            user = user.get(user_id=int(user_id))
-
-            print(f'is_positive :{is_positive}')
-            if int(is_positive) == 0:
+                user = user.get(user_id=int(user_id))
                 print(f'is_positive: {is_positive} image_path :{image_path} email: {user.email}')
                 SendMail(image_path, user.email)
+
+
     return f"got image from user {user_id} in the end of riding"
 
 
 if __name__ == '__main__':
     app.run("0.0.0.0")
-    # app.run()
+

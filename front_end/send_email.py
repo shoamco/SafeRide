@@ -29,4 +29,3 @@ def SendMail(ImgFileName,email):
         server.sendmail(sender_email, receiver_email, msg.as_string())
 
 
-#SendMail("C:\\excellenteam\\downloads\\helmet.jpg","efratkopo2@gmail.com")
