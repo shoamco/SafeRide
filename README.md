@@ -11,6 +11,7 @@
 * [Team Members](#members)
 * [About the Project](#about-the-project)
 * [Technologies](#Technologies)
+* [Screenshots](#Screenshots)
 
 ## Team Members
 * Tamar
@@ -37,7 +38,10 @@ for this, we used the Raspberry pi camera.
 * work with Raspberry pi.
 
 ### expansion:
-- When 
+- When a user wants to rent a bicycle, he registered on the site and starts riding.
+- Now, if he rides the entire ride with a helmet, he'll get a bonus.
+- But, if he takes off his helmet, the alert starts, he doesn't get a bonus and he also gets an SMS and an email
+with a picture of him without a helmet!
 
 
 ## Screenshots
