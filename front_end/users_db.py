@@ -4,11 +4,8 @@ from flask import Flask, request, render_template, url_for, flash, redirect
 from flask_mongoengine import MongoEngine
 import mongoengine as me
 import base64
-
-################ forms ################
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from send_email import SendMail
+from forms import RegistrationForm,LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
@@ -21,34 +18,6 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine(app)
 
-
-class RegistrationForm(FlaskForm):
-    user_id = IntegerField("Id", validators=[DataRequired()])
-
-    name = StringField('Name',
-                       validators=[DataRequired(), Length(min=2, max=20)])
-
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-
-    phone = IntegerField("Phone", validators=[DataRequired()])
-
-    password = PasswordField('Password', validators=[DataRequired()])
-
-    confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
-
-    submit = SubmitField('Sign Up')
-
-
-class LoginForm(FlaskForm):
-    user_id = StringField('User Id',
-                          validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
-
-
 class User(me.Document):
     user_id = me.IntField(unique=True)
     name = me.StringField()
@@ -58,6 +27,11 @@ class User(me.Document):
     num_trips = me.IntField()
     positive_points = me.IntField()
     negative_points = me.IntField()
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World! We are SafeRode'
+
 
 
 @app.route('/user_window/<current_user_id>', methods=['GET', 'POST'])
@@ -101,7 +75,7 @@ def sendMessage(user_id):
         number_dest = f"+972{phone}"
         message = client.messages \
             .create(
-            body=f'Hi {name}! we found you rode without helmet today. for your safety- please note it. SafeRide:) ',
+            body=f"Hi {name}!\nWe saw you riding without an helmet today. For your own safety- please note it.\nSafeRide!",
             from_='+14805264302',
             to=number_dest
         )
@@ -115,11 +89,11 @@ def update_user():
         user_id = request.form.get('user_id')
         is_positive = request.form.get('is_positive')
         user = User.objects(user_id=user_id)
-        print(f'user:{user} is_positive:{is_positive}')
+
         if user:
             user = user.get(user_id=user_id)
             user.num_trips += 1
-            print(f'is_positive: {is_positive}, user_id: {user_id}')
+
             if int(is_positive) == 1:
                 user.positive_points += 1
             else:
@@ -131,13 +105,13 @@ def update_user():
     return "NOT GET OT POST METHOD WERE USED"
 
 
-# @app.route('/')
+
 @app.route('/users')
 def users_table_show():
     return render_template("index.html", users=User.objects())
 
 
-# <body style="background-color:#E6E6FA">
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -176,30 +150,29 @@ def login():
 def upload_image():
     if request.method == 'POST':
         jsn = request.get_json()
-        img = jsn['img']
-        img_name = jsn['img_name']
-        with_helmet = jsn['with_helmet']  # send email
-        imgdata = base64.b64decode(img)
+        is_positive = jsn['is_positive']  # send email
+        if int(is_positive) == 0:
+            user_id = jsn['user_id']
+            img = jsn['img']
+            img_name = jsn['img_name']
+            imgdata = base64.b64decode(img)
 
-        if with_helmet == 0:
-            try:
-                client = Client(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+            user = User.objects(user_id=int(user_id))
+            print(f'user :{user}')
+            if user:
+                print(f'user :{user}')
+                image_path = f'images\\{img_name}.jpg'
+                with open(image_path, 'wb') as f:
+                    f.write(imgdata)
 
-                message = client.messages \
-                    .create(
-                    body='היי שהם. מצאנו אותך רוכבת ללא קסדה! אנא היזהרי עבור בטיחותך לפעם הבאה:)',
-                    from_='+14805264302',
-                    # media_url=['C:\\excellenteam\\downloads\\helmet.jpg'],
-                    to='+9720526064628'
-                )
-            except:
-                print("Failed to send SMS")
+                user = user.get(user_id=int(user_id))
+                print(f'is_positive: {is_positive} image_path :{image_path} email: {user.email}')
+                SendMail(image_path, user.email)
 
-        with open(f'images\\{img_name}.jpg', 'wb') as f:
-            f.write(imgdata)
-        return "got the image!"
+
+    return f"got image from user {user_id} in the end of riding"
 
 
 if __name__ == '__main__':
     app.run("0.0.0.0")
-    # app.run()
+
