@@ -46,9 +46,7 @@ with a picture of him without a helmet!
 
 
 <br />
-<p align="center">
-    <img src="front_end/images/image.jpg"  alt="Logo" width="400" height="350">
-</p>
+
 
 ## Technologies
 * [Raspberry Pi](https://en.wikipedia.org/wiki/Raspberry_Pi)
